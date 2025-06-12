@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anthony Nguyen – UGC Creator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f7f7f7;
+      color: #1a1a1a;
+      line-height: 1.6;
+    }
+    header {
+      text-align: center;
+      padding: 4rem 1rem 2rem;
+      background: #fff;
+    }
+    header h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+    header p {
+      font-size: 1.2rem;
+      color: #555;
+    }
+    section {
+      max-width: 960px;
+      margin: 3rem auto;
+      padding: 0 1.5rem;
+    }
+    h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 1rem;
+      border-bottom: 2px solid #e0e0e0;
+      padding-bottom: 0.5rem;
+    }
+    p {
+      font-size: 1.05rem;
+      margin-bottom: 1.5rem;
+    }
+    .videos, .photos, .brands {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      justify-content: center;
+    }
+    .video-card, .photos img, .brands img {
+      cursor: pointer;
+    }
+    .video-card {
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      transition: transform 0.3s ease;
+      max-width: 300px;
+    }
+    .video-card:hover {
+      transform: scale(1.02);
+    }
+    iframe {
+      width: 100%;
+      height: 180px;
+      border: none;
+      pointer-events: none;
+    }
+    .photos img {
+      width: 180px;
+      height: auto;
+      border-radius: 8px;
+      object-fit: cover;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      transition: transform 0.3s ease;
+    }
+    .brands img {
+      width: 120px;
+      height: 80px;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      transition: transform 0.3s ease;
+    }
+    .photos img:hover, .brands img:hover {
+      transform: scale(1.05);
+    }
+    .contact {
+      text-align: center;
+      margin-top: 4rem;
+    }
+    .contact a {
+      display: inline-block;
+      background: #000;
+      color: white;
+      font-weight: 600;
+      padding: 0.75rem 1.5rem;
+      margin: 0.5rem;
+      border-radius: 30px;
+      text-decoration: none;
+      transition: background 0.3s ease;
+    }
+    .contact a:hover {
+      background: #444;
+    }
+    .video-carousel {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      gap: 1.5rem;
+      padding: 1rem 0;
+    }
+    .video-carousel::-webkit-scrollbar {
+      display: none;
+    }
+    .video-slide {
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      cursor: pointer;
+      position: relative;
+      aspect-ratio: 9 / 16;
+    }
+    .video-slide::before {
+      content: "▶";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2.5rem;
+      color: white;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 0.5rem 1rem;
+      border-radius: 50%;
+      z-index: 1;
+    }
+    .video-slide video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+      display: block;
+    }
+    .video-caption {
+    margin-top: 0.5rem;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #333;
+    }
+
+    .video-item {
+    flex: 0 0 auto;
+    scroll-snap-align: center;
+    text-align: center;
+    width: 80%;
+    max-width: 200px;
+    }
+    .carousel-buttons {
+      text-align: center;
+      margin-top: 1rem;
+    }
+    .carousel-buttons button {
+      background: #000;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      margin: 0 0.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .carousel-buttons button:hover {
+      background: #444;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal.active {
+      display: flex;
+    }
+    .modal-content {
+      max-width: 90%;
+      max-height: 90%;
+      animation: popIn 0.4s ease-out forwards;
+    }
+    .modal-content img {
+      max-width: 90vw;
+      max-height: 80vh;
+      height: auto;
+      width: auto;
+      object-fit: contain;
+      display: block;
+      margin: auto;
+      border-radius: 12px;
+    }
+
+
+    .modal-content video {
+      max-width: 100%;
+      max-height: 90vh;
+      border-radius: 12px;
+      object-fit: contain;
+      display: block;
+      margin: auto;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 2rem;
+      color: white;
+      background: none;
+      border: none;
+      cursor: pointer;
+      z-index: 1000;
+    }
+    @keyframes popIn {
+      0% { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+     .testimonial {
+      background: #fff;
+      border-left: 4px solid #000;
+      padding: 1rem;
+      margin: 1rem 0;
+      font-style: italic;
+    }
+
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Anthony Nguyen</h1>
+    <p>Content Creator | Model | Storyteller | UGC Creator</p>
+  </header>
+
+  <section>
+    <h2>About Me</h2>
+    <p>
+      Hey! I'm Anthony – a 22-year-old content creator with a passion for storytelling, movement, and aesthetics. Whether it’s fashion, fitness or lifestyle, I believe in content that feels real and resonates.
+      <br><br>
+      I’m currently studying for my Bachelor of Science, and when I’m not editing or shooting new ideas, I love connecting with people – both online and offline. I bring energy, detail, and a sharp visual eye to every project.
+      <br><br>
+      Over past months, I’ve had the chance to work with inspiring brands, from well-known names to local gems. What matters most to me is bringing their message to life in a way that feels human, modern and authentic. I'm fluent in English and German and always down to try something fresh.
+      <br><br>
+      This portfolio is just a glimpse – but hopefully one that says: I'm ready to create something meaningful with you.
+    </p>
+    <div class="photos" style="overflow-x: scroll; display: flex; scroll-snap-type: x mandatory; gap: 2rem; padding: 1rem 0;">
+  <style>
+    .photos img {
+      flex: 0 0 90%;
+      scroll-snap-align: start;
+      max-width: 600px;
+      height: auto;
+      border-radius: 12px;
+      object-fit: cover;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+    }
+    .photos::-webkit-scrollbar {
+      display: none;
+    }
+  </style>
+  <img src="images/IMG_9957.jpg" alt="Anthony photo 1" onclick="openModal(this.src)" style="flex: 0 0 auto; scroll-snap-align: start;">
+  <img src="images/smile.jpg" alt="Anthony photo 2" onclick="openModal(this.src)" style="flex: 0 0 auto; scroll-snap-align: start;">
+  <img src="images/IMG_6384.jpg" alt="Anthony photo 3" onclick="openModal(this.src)" style="flex: 0 0 auto; scroll-snap-align: start;">
+  <img src="images/IMG_6117 2.jpg" alt="Anthony photo 4" onclick="openModal(this.src)" style="flex: 0 0 auto; scroll-snap-align: start;">
+  <img src="images/IMG_7075.jpg" alt="Anthony photo 5" onclick="openModal(this.src)" style="flex: 0 0 auto; scroll-snap-align: start;">
+  <img src="images/IMG_3956.jpg" alt="Anthony photo 6" onclick="openModal(this.src)" style="flex: 0 0 auto; scroll-snap-align: start;">
+  <img src="images/face.jpg" alt="Anthony photo 7" onclick="openModal(this.src)" style="flex: 0 0 auto; scroll-snap-align: start;">
+  <img src="images/IMG_4106.jpg" alt="Anthony photo 8" onclick="openModal(this.src)" style="flex: 0 0 auto; scroll-snap-align: start;">
+</div>
+  </section>
+
+  <section>
+    <h2>Projects</h2>
+    <div class="video-carousel" id="video-carousel">
+      <div class="video-item">
+        <div class="video-slide" onclick="openModal('videos/NicNacs E-Casting.mov')">
+          <video muted playsinline preload="auto">
+            <source src="videos/NicNacs E-Casting.mov" type="video/quicktime">
+          </video>
+        </div>
+        <div class="video-caption">NicNacs E-Casting</div>
+      </div>
+      <div class="video-item">
+        <div class="video-slide" onclick="openModal('videos/Neptun.MOV')">
+          <video muted playsinline preload="auto">
+            <source src="videos/Neptun.MOV" type="video/quicktime">
+          </video>
+        </div>
+        <div class="video-caption">Neptun</div>
+      </div>
+      <div class="video-item">
+        <div class="video-slide" onclick="openModal('videos/Trazlece.mov')">
+          <video muted playsinline preload="auto">
+            <source src="videos/Trazlece.mov" type="video/quicktime">
+          </video>
+        </div>
+        <div class="video-caption">Trazlece</div>
+      </div>
+      <div class="video-item">
+        <div class="video-slide" onclick="openModal('videos/bowlmaker.mp4')">
+          <video muted playsinline preload="auto">
+            <source src="videos/bowlmaker.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-caption">Bowlmaker</div>
+      </div>
+      <div class="video-item">
+        <div class="video-slide" onclick="openModal('videos/SaveOneDropOne.mov')">
+          <video muted playsinline preload="auto">
+            <source src="videos/SaveOneDropOne.mov" type="video/quicktime">
+          </video>
+        </div>
+        <div class="video-caption">Save One Drop One</div>
+      </div>
+      <div class="video-item">
+        <div class="video-slide" onclick="openModal('videos/bershka.mp4')">
+          <video muted playsinline preload="auto">
+            <source src="videos/bershka.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-caption">Bershka</div>
+      </div>
+      <div class="video-item">
+        <div class="video-slide" onclick="openModal('videos/allegra.MOV')">
+          <video muted playsinline preload="auto">
+            <source src="videos/allegra.MOV" type="video/quicktime">
+          </video>
+        </div>
+        <div class="video-caption">Allegra</div>
+      </div>
+      <div class="video-item">
+        <div class="video-slide" onclick="openModal('videos/Outfit.MOV')">
+          <video muted playsinline preload="auto">
+            <source src="videos/Outfit.MOV" type="video/quicktime">
+          </video>
+        </div>
+        <div class="video-caption">Outfit</div>
+      </div>
+      <div class="video-item">
+        <div class="video-slide" onclick="openModal('videos/chillGuy.MOV')">
+          <video muted playsinline preload="auto">
+            <source src="videos/chillGuy.MOV" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-caption">Chill Guy</div>
+      </div>
+      <div class="video-item">
+        <div class="video-slide" onclick="openModal('videos/yepoda.mp4')">
+          <video muted playsinline preload="auto">
+            <source src="videos/yepoda.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-caption">Yepoda</div>
+      </div>
+      <div class="video-item">
+        <div class="video-slide" onclick="openModal('videos/interview.mp4')">
+          <video muted playsinline preload="auto">
+            <source src="videos/interview.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-caption">Interview</div>
+      </div>
+    </div>
+    <div class="carousel-buttons">
+      <button onclick="scrollCarousel(-1)">&larr;</button>
+      <button onclick="scrollCarousel(1)">&rarr;</button>
+    </div>
+  </section>
+
+  <div class="modal" id="popup">
+    <button class="close-btn" onclick="closeModal()">&times;</button>
+    <div class="modal-content" id="modal-content"></div>
+  </div>
+
+  <!--   <section>
+    <h2>What People Say</h2>
+    <div class="testimonial">„Anthony hat uns nicht nur mit seiner Kreativität überzeugt, sondern auch mit seiner Professionalität.“ – Kundenfeedback</div>
+    <div class="testimonial">„Er bringt die perfekte Mischung aus Ruhe, Energie und Style mit. Wir würden jederzeit wieder buchen.“ – Markenpartner</div>
+  </section>
+-->
+  <section>
+  <h2>Brands I've Worked With</h2>
+  <div class="brands">
+    <img src="brands/nicnacs.png" alt="NicNacs">
+    <img src="brands/bowlmaker.png" alt="Bowlmaker">
+    <img src="brands/yepoda.png" alt="Yepoda">
+    <img src="brands/naxx.png" alt="Neptun">
+    <img src="brands/allegra.png" alt="Allegra">
+    <img src="brands/trazlece.png" alt="Trazlece">
+    <img src="brands/bershka.png" alt="Bershka">
+  </div>
+</section>
+
+
+  <section class="contact">
+    <h2>Let’s Work Together</h2>
+    <a href="https://www.instagram.com/anthonyinguyen" target="_blank">Instagram</a>
+    <a href="https://www.tiktok.com/@anthonylnguyen?_t=ZN-8x80ccHjQog&_r=1" target="_blank">TikTok</a>
+    <a href="mailto:anthonyinguyen@gmx.de">E-Mail</a>
+  </section>
+
+  <div class="modal" id="popup">
+    <button class="close-btn" onclick="closeModal()">&times;</button>
+    <div class="modal-content" id="modal-content"></div>
+  </div>
+
+
+<script>
+    function openModal(src) {
+      const popup = document.getElementById('popup');
+      const content = document.getElementById('modal-content');
+      if (src.endsWith('.jpg') || src.endsWith('.png')) {
+        content.innerHTML = `<img src="${src}" alt="Photo">`;
+      } else {
+        content.innerHTML = `<video src="${src}" controls autoplay style="max-width: 100%; max-height: 90vh; object-fit: contain;"></video>`;
+      }
+      popup.classList.add('active');
+    }
+    function closeModal() {
+      const popup = document.getElementById('popup');
+      const content = document.getElementById('modal-content');
+      content.innerHTML = '';
+      popup.classList.remove('active');
+    }
+    function scrollCarousel(direction) {
+      const carousel = document.getElementById('video-carousel');
+      const slideWidth = carousel.querySelector('.video-slide').offsetWidth + 24;
+      carousel.scrollBy({ left: direction * slideWidth, behavior: 'smooth' });
+    }
+  </script>
+
+</body>
+</html>
